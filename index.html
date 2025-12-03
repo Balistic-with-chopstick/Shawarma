@@ -96,6 +96,7 @@ function updatePlate(){ ui.meatCount.textContent=state.plate.meat; ui.veg.textCo
 function randInt(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
 
 function createOrder(){
+  if(state.orders.length>=4) return; // cap at 4 active orders
   const order={id:crypto.randomUUID(), meat:randInt(1,2+state.day), veg:Math.random()<0.5, sauce:Math.random()<0.5, patience:1.0, decay:0.004+state.day*0.001};
   state.orders.push(order); renderOrders(); startPatience(order);
 }
@@ -143,7 +144,7 @@ document.getElementById('sauceBtn').onclick=()=>{ state.plate.sauce=!state.plate
 document.getElementById('wrapBtn').onclick=()=>{ state.plate.wrapped=true; updatePlate(); };
 document.getElementById('clearBtn').onclick=clearPlate;
 document.getElementById('serveBtn').onclick=serve;
-document.getElementById('newDayBtn').onclick=()=>{ state.day++; updateStats(); createOrder(); };
+document.getElementById('newDayBtn').onclick=()=>{ state.day++; updateStats(); };
 
 // Shop
 document.getElementById('buyCookie').onclick=()=>{
@@ -161,8 +162,18 @@ document.getElementById('buyTipJar').onclick=()=>{
   else log('Not enough money for Tip Jar');
 };
 
+// Infinite customer loop with cap
+function customerLoop(){
+  createOrder();
+  const nextMs = Math.max(2000, 5000 - state.day*300); // faster arrivals on later days
+  setTimeout(customerLoop, nextMs);
+}
+
 // Start game
-updateStats(); updatePlate(); createOrder();
+updateStats();
+updatePlate();
+createOrder();
+customerLoop();
 </script>
 </body>
 </html>
