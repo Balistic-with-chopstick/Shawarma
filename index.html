@@ -2,405 +2,167 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-  <title>Shawarma Stand</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Shawarma Stand with Shop</title>
   <style>
-    :root {
-      --bg: #101417;
-      --panel: #172027;
-      --accent: #ffcc66;
-      --accent2: #66d18f;
-      --text: #e9f0f6;
-      --muted: #92a3b5;
-      --danger: #ff6b6b;
-      --ok: #7bd389;
+    body { font-family: sans-serif; background:#222; color:#eee; margin:0; }
+    .app { max-width:900px; margin:auto; padding:16px; }
+    header { display:flex; justify-content:space-between; margin-bottom:10px; }
+    .stats span { margin-left:6px; font-weight:bold; }
+    .panel { background:#333; padding:12px; border-radius:8px; margin-bottom:12px; }
+    .orders .order { background:#444; padding:8px; margin:6px 0; border-radius:6px; }
+    .patience { height:8px; background:#111; border-radius:4px; overflow:hidden; }
+    .patience div { height:100%; background:#6f6; width:100%; }
+    .controls button, .actions button, .shop button {
+      margin:4px; padding:8px; border:none; border-radius:6px; cursor:pointer;
     }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Arial, sans-serif;
-      background: linear-gradient(180deg, #0c1115, var(--bg));
-      color: var(--text);
-      display: flex; min-height: 100vh; justify-content: center; align-items: center;
-    }
-    .app {
-      width: 100%; max-width: 900px; padding: 16px;
-    }
-    header {
-      display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;
-    }
-    .brand { font-weight: 700; letter-spacing: 0.5px; }
-    .stats { display: flex; gap: 12px; font-size: 14px; color: var(--muted); }
-    .stats .value { color: var(--text); font-weight: 600; margin-left: 6px; }
-
-    .grid {
-      display: grid; grid-template-columns: 1.2fr 1fr;
-      gap: 16px;
-    }
-    @media (max-width: 760px) {
-      .grid { grid-template-columns: 1fr; }
-    }
-
-    .panel {
-      background: rgba(23,32,39,0.9);
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 12px; padding: 14px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
-    }
-    .panel h3 {
-      margin: 0 0 10px; font-size: 16px; color: var(--muted); font-weight: 600;
-    }
-
-    /* Orders */
-    .orders { display: flex; flex-direction: column; gap: 10px; }
-    .order {
-      display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center;
-      padding: 10px; border-radius: 10px; background: #1c2730; border: 1px solid rgba(255,255,255,0.05);
-    }
-    .order-line { font-size: 14px; }
-    .patience {
-      width: 160px; height: 10px; background: #101820; border-radius: 6px; overflow: hidden; border: 1px solid rgba(255,255,255,0.06);
-    }
-    .patience>div { height: 100%; background: linear-gradient(90deg, var(--ok), #b6e3a8); width: 100%; transition: width 0.2s linear; }
-
-    /* Prep station */
-    .prep {
-      display: grid; gap: 10px; grid-template-columns: 1fr 1fr;
-    }
-    @media (max-width: 560px) { .prep { grid-template-columns: 1fr; } }
-
-    .plate {
-      background: #1b242b; border: 1px dashed rgba(255,255,255,0.12); padding: 12px; border-radius: 10px;
-    }
-    .plate .row { display: flex; align-items: center; justify-content: space-between; margin: 6px 0; }
-    .badge {
-      display: inline-block; padding: 4px 8px; border-radius: 999px; font-size: 12px; background: #23303a; color: var(--text);
-    }
-    .badge.ok { background: #21352a; color: #9fe3b8; }
-    .badge.no { background: #3a2327; color: #ff9fa8; }
-    .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-    .controls button {
-      padding: 12px 10px; border: none; border-radius: 10px;
-      color: #0f1418; font-weight: 700; background: var(--accent);
-      box-shadow: 0 2px 0 #caa44f; cursor: pointer;
-    }
-    .controls button.secondary {
-      background: #8fd3c8; box-shadow: 0 2px 0 #69b3a9;
-    }
-    .controls button.warn {
-      background: #f7a6a6; box-shadow: 0 2px 0 #e47f7f;
-    }
-    .controls button:active { transform: translateY(1px); }
-    .actions { display: flex; gap: 8px; }
-    .actions button {
-      flex: 1; padding: 12px; border-radius: 10px; border: none; font-weight: 700;
-      background: var(--accent2); color: #0f1418; box-shadow: 0 2px 0 #3ea46c; cursor: pointer;
-    }
-    .actions button.serve { background: #ffd084; box-shadow: 0 2px 0 #d1a75a; }
-    .actions button.reset { background: #a4b4c4; box-shadow: 0 2px 0 #8091a2; }
-
-    /* Log */
-    .log {
-      background: #1a2229; border: 1px solid rgba(255,255,255,0.06);
-      height: 140px; overflow: auto; border-radius: 10px; padding: 10px; font-size: 13px; color: #cbd6e1;
-    }
-    .log p { margin: 6px 0; }
-    .log .good { color: #a8e8c7; }
-    .log .bad { color: #f5a4a4; }
-
-    /* Footer */
-    footer {
-      margin-top: 14px; display: flex; gap: 8px; align-items: center; color: var(--muted); font-size: 13px;
-    }
-    .hint { background: #1b242b; padding: 8px 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.06); }
+    .shop { display:flex; gap:8px; flex-wrap:wrap; }
+    .log { max-height:120px; overflow:auto; background:#222; padding:8px; border-radius:6px; }
   </style>
 </head>
 <body>
-  <div class="app">
-    <header>
-      <div class="brand">Shawarma Stand</div>
-      <div class="stats">
-        <div>Score <span class="value" id="score">0</span></div>
-        <div>Streak <span class="value" id="streak">0</span></div>
-        <div>Misses <span class="value" id="misses">0</span></div>
-        <div>Day <span class="value" id="day">1</span></div>
-      </div>
-    </header>
-
-    <div class="grid">
-      <section class="panel">
-        <h3>Orders queue</h3>
-        <div id="orders" class="orders"></div>
-      </section>
-
-      <section class="panel">
-        <h3>Prep station</h3>
-
-        <div class="prep">
-          <div class="plate">
-            <div class="row"><strong>Meat slices</strong> <span class="badge" id="meatCount">0</span></div>
-            <div class="row"><strong>Veggies</strong> <span class="badge" id="veg">None</span></div>
-            <div class="row"><strong>Sauce</strong> <span class="badge" id="sauce">None</span></div>
-            <div class="row"><strong>Wrap</strong> <span class="badge" id="wrap">Open</span></div>
-          </div>
-
-          <div class="controls">
-            <button id="sliceBtn">Slice meat +1</button>
-            <button class="secondary" id="vegBtn">Toggle veggies</button>
-            <button class="secondary" id="sauceBtn">Toggle sauce</button>
-            <button class="warn" id="wrapBtn">Wrap</button>
-            <button class="secondary" id="unwrapBtn">Unwrap</button>
-            <button class="secondary" id="clearBtn">Clear plate</button>
-          </div>
-        </div>
-
-        <div class="actions" style="margin-top:10px;">
-          <button class="serve" id="serveBtn">Serve to first customer</button>
-          <button class="reset" id="newDayBtn">Next day (harder)</button>
-        </div>
-
-        <div class="log" id="log"></div>
-      </section>
+<div class="app">
+  <header>
+    <div>Shawarma Stand</div>
+    <div class="stats">
+      Score <span id="score">0</span> | 
+      Money $<span id="money">0</span> | 
+      Day <span id="day">1</span>
     </div>
+  </header>
 
-    <footer>
-      <div class="hint">Tip: Match the first order exactly, wrap it, then Serve. Don’t let patience hit zero.</div>
-    </footer>
+  <div class="panel">
+    <h3>Orders</h3>
+    <div id="orders" class="orders"></div>
   </div>
 
-  <script>
-    // Game state
-    const state = {
-      score: 0,
-      streak: 0,
-      misses: 0,
-      day: 1,
-      orders: [],
-      plate: { meat: 0, veg: false, sauce: false, wrapped: false },
-      timers: new Map()
-    };
+  <div class="panel">
+    <h3>Prep Station</h3>
+    <div>
+      Meat: <span id="meatCount">0</span> | Veg: <span id="veg">No</span> | Sauce: <span id="sauce">No</span> | Wrap: <span id="wrap">Open</span>
+    </div>
+    <div class="controls">
+      <button id="sliceBtn">+Meat</button>
+      <button id="vegBtn">Toggle Veg</button>
+      <button id="sauceBtn">Toggle Sauce</button>
+      <button id="wrapBtn">Wrap</button>
+      <button id="clearBtn">Clear</button>
+    </div>
+    <div class="actions">
+      <button id="serveBtn">Serve</button>
+      <button id="newDayBtn">Next Day</button>
+    </div>
+  </div>
 
-    const ui = {
-      score: document.getElementById('score'),
-      streak: document.getElementById('streak'),
-      misses: document.getElementById('misses'),
-      day: document.getElementById('day'),
-      orders: document.getElementById('orders'),
-      log: document.getElementById('log'),
-      meatCount: document.getElementById('meatCount'),
-      veg: document.getElementById('veg'),
-      sauce: document.getElementById('sauce'),
-      wrap: document.getElementById('wrap'),
-      sliceBtn: document.getElementById('sliceBtn'),
-      vegBtn: document.getElementById('vegBtn'),
-      sauceBtn: document.getElementById('sauceBtn'),
-      wrapBtn: document.getElementById('wrapBtn'),
-      unwrapBtn: document.getElementById('unwrapBtn'),
-      clearBtn: document.getElementById('clearBtn'),
-      serveBtn: document.getElementById('serveBtn'),
-      newDayBtn: document.getElementById('newDayBtn')
-    };
+  <div class="panel">
+    <h3>Shop Upgrades</h3>
+    <div class="shop">
+      <button id="buyCookie">Buy Cookie ($5)</button>
+      <button id="useCookie">Use Cookie</button>
+      <button id="buyTipJar">Buy Tip Jar ($10)</button>
+    </div>
+  </div>
 
-    // Utilities
-    function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
-    function log(msg, kind='') {
-      const p = document.createElement('p');
-      p.textContent = msg;
-      if (kind) p.classList.add(kind);
-      ui.log.prepend(p);
-      // limit log length
-      const children = ui.log.children;
-      if (children.length > 100) ui.log.removeChild(ui.log.lastChild);
-    }
+  <div class="panel">
+    <h3>Log</h3>
+    <div id="log" class="log"></div>
+  </div>
+</div>
 
-    function updateStats() {
-      ui.score.textContent = state.score;
-      ui.streak.textContent = state.streak;
-      ui.misses.textContent = state.misses;
-      ui.day.textContent = state.day;
-    }
+<script>
+const state = {
+  score:0, money:0, day:1,
+  plate:{meat:0, veg:false, sauce:false, wrapped:false},
+  orders:[], timers:new Map(),
+  upgrades:{cookie:false, tipJar:false}
+};
 
-    function updatePlate() {
-      ui.meatCount.textContent = state.plate.meat;
-      ui.veg.textContent = state.plate.veg ? 'Added' : 'None';
-      ui.sauce.textContent = state.plate.sauce ? 'Added' : 'None';
-      ui.wrap.textContent = state.plate.wrapped ? 'Wrapped' : 'Open';
+const ui = {
+  score:document.getElementById('score'),
+  money:document.getElementById('money'),
+  day:document.getElementById('day'),
+  orders:document.getElementById('orders'),
+  log:document.getElementById('log'),
+  meatCount:document.getElementById('meatCount'),
+  veg:document.getElementById('veg'),
+  sauce:document.getElementById('sauce'),
+  wrap:document.getElementById('wrap')
+};
 
-      ui.meatCount.className = `badge ${state.plate.meat>0?'ok':''}`;
-      ui.veg.className = `badge ${state.plate.veg?'ok':'no'}`;
-      ui.sauce.className = `badge ${state.plate.sauce?'ok':'no'}`;
-      ui.wrap.className = `badge ${state.plate.wrapped?'ok':'no'}`;
-    }
+function log(msg){ const p=document.createElement('p'); p.textContent=msg; ui.log.prepend(p); }
+function updateStats(){ ui.score.textContent=state.score; ui.money.textContent=state.money.toFixed(2); ui.day.textContent=state.day; }
+function updatePlate(){ ui.meatCount.textContent=state.plate.meat; ui.veg.textContent=state.plate.veg?'Yes':'No'; ui.sauce.textContent=state.plate.sauce?'Yes':'No'; ui.wrap.textContent=state.plate.wrapped?'Wrapped':'Open'; }
 
-    function createOrder() {
-      const order = {
-        id: crypto.randomUUID(),
-        meat: randInt(1, Math.min(5, 2 + state.day)), // increases by day
-        veg: Math.random() < 0.6,
-        sauce: Math.random() < 0.6,
-        patience: 1.0,
-        decay: 0.003 + state.day * 0.0015 // faster decay on higher days
-      };
-      state.orders.push(order);
-      renderOrders();
-      log(`New order: ${order.meat} meat${order.veg?', +veg':''}${order.sauce?', +sauce':''}`);
-      startPatienceTimer(order);
-    }
+function randInt(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
 
-    function startPatienceTimer(order) {
-      const t = setInterval(() => {
-        order.patience -= order.decay;
-        if (order.patience <= 0) {
-          order.patience = 0;
-          clearInterval(state.timers.get(order.id));
-          state.timers.delete(order.id);
-          missOrder(order.id, 'Customer left (too slow).');
-        }
-        updatePatienceBar(order.id, order.patience);
-      }, 100);
-      state.timers.set(order.id, t);
-    }
+function createOrder(){
+  const order={id:crypto.randomUUID(), meat:randInt(1,2+state.day), veg:Math.random()<0.5, sauce:Math.random()<0.5, patience:1.0, decay:0.004+state.day*0.001};
+  state.orders.push(order); renderOrders(); startPatience(order);
+}
+function startPatience(order){
+  const t=setInterval(()=>{
+    order.patience-=order.decay;
+    if(order.patience<=0){ order.patience=0; clearInterval(state.timers.get(order.id)); state.timers.delete(order.id); missOrder(order.id); }
+    updatePatience(order);
+  },100);
+  state.timers.set(order.id,t);
+}
+function updatePatience(order){
+  const el=document.querySelector(`.order[data-id="${order.id}"] .patience div`);
+  if(el) el.style.width=(order.patience*100)+'%';
+}
+function renderOrders(){
+  ui.orders.innerHTML='';
+  state.orders.forEach(o=>{
+    const div=document.createElement('div'); div.className='order'; div.dataset.id=o.id;
+    div.innerHTML=`Needs: ${o.meat} meat${o.veg?', veg':''}${o.sauce?', sauce':''}<div class="patience"><div style="width:${o.patience*100}%"></div></div>`;
+    ui.orders.appendChild(div);
+  });
+}
+function clearPlate(){ state.plate={meat:0, veg:false, sauce:false, wrapped:false}; updatePlate(); }
+function missOrder(id){ state.orders=state.orders.filter(o=>o.id!==id); log('Missed order'); updateStats(); renderOrders(); }
 
-    function updatePatienceBar(id, pct) {
-      const el = document.querySelector(`.order[data-id="${id}"] .patience > div`);
-      if (el) {
-        el.style.width = `${Math.max(0, Math.min(1, pct)) * 100}%`;
-        // color shift near end
-        el.style.background = pct < 0.3
-          ? `linear-gradient(90deg, var(--danger), #ffb2b2)`
-          : `linear-gradient(90deg, var(--ok), #b6e3a8)`;
-      }
-    }
+function serve(){
+  if(state.orders.length===0){ log('No orders'); return; }
+  const order=state.orders[0];
+  clearInterval(state.timers.get(order.id)); state.timers.delete(order.id);
+  state.orders.shift(); renderOrders();
+  const correct=state.plate.wrapped && state.plate.meat===order.meat && state.plate.veg===order.veg && state.plate.sauce===order.sauce;
+  if(correct){
+    state.score+=10; state.money+=1; // $1 per customer
+    if(state.upgrades.tipJar){ const tip=(Math.random()*0.5+0.5); state.money+=tip; log(`Customer tipped $${tip.toFixed(2)}`); }
+    log('Served correctly! +$1');
+  } else { log('Wrong order'); }
+  updateStats(); clearPlate();
+}
 
-    function renderOrders() {
-      ui.orders.innerHTML = '';
-      state.orders.forEach(order => {
-        const div = document.createElement('div');
-        div.className = 'order';
-        div.dataset.id = order.id;
+// Controls
+document.getElementById('sliceBtn').onclick=()=>{ state.plate.meat++; updatePlate(); };
+document.getElementById('vegBtn').onclick=()=>{ state.plate.veg=!state.plate.veg; updatePlate(); };
+document.getElementById('sauceBtn').onclick=()=>{ state.plate.sauce=!state.plate.sauce; updatePlate(); };
+document.getElementById('wrapBtn').onclick=()=>{ state.plate.wrapped=true; updatePlate(); };
+document.getElementById('clearBtn').onclick=clearPlate;
+document.getElementById('serveBtn').onclick=serve;
+document.getElementById('newDayBtn').onclick=()=>{ state.day++; updateStats(); createOrder(); };
 
-        const line = document.createElement('div');
-        line.className = 'order-line';
-        line.textContent = `Needs: ${order.meat} meat${order.veg?', +veg':''}${order.sauce?', +sauce':''}`;
+// Shop
+document.getElementById('buyCookie').onclick=()=>{
+  if(state.money>=5){ state.money-=5; state.upgrades.cookie=true; log('Bought Cookie upgrade'); updateStats(); }
+  else log('Not enough money for Cookie');
+};
+document.getElementById('useCookie').onclick=()=>{
+  if(state.upgrades.cookie && state.orders.length>0){
+    const order=state.orders[0];
+    order.decay*=0.5; log('Cookie used: patience slows down');
+  } else log('No cookie or no orders');
+};
+document.getElementById('buyTipJar').onclick=()=>{
+  if(state.money>=10){ state.money-=10; state.upgrades.tipJar=true; log('Bought Tip Jar upgrade'); updateStats(); }
+  else log('Not enough money for Tip Jar');
+};
 
-        const patience = document.createElement('div');
-        patience.className = 'patience';
-        const fill = document.createElement('div');
-        fill.style.width = `${order.patience * 100}%`;
-        patience.appendChild(fill);
-
-        div.appendChild(line);
-        div.appendChild(patience);
-        ui.orders.appendChild(div);
-      });
-    }
-
-    function clearPlate() {
-      state.plate = { meat: 0, veg: false, sauce: false, wrapped: false };
-      updatePlate();
-    }
-
-    function missOrder(id, reason) {
-      const idx = state.orders.findIndex(o => o.id === id);
-      if (idx !== -1) state.orders.splice(idx, 1);
-      state.misses += 1;
-      state.streak = 0;
-      updateStats();
-      renderOrders();
-      log(`Missed order: ${reason}`, 'bad');
-    }
-
-    function serveFirst() {
-      if (state.orders.length === 0) {
-        log('No customers waiting.', 'bad');
-        return;
-      }
-      const order = state.orders[0];
-      const timer = state.timers.get(order.id);
-      if (timer) {
-        clearInterval(timer);
-        state.timers.delete(order.id);
-      }
-
-      const correct =
-        state.plate.wrapped &&
-        state.plate.meat === order.meat &&
-        state.plate.veg === order.veg &&
-        state.plate.sauce === order.sauce;
-
-      state.orders.shift();
-      renderOrders();
-
-      if (correct) {
-        const timeBonus = Math.round(order.patience * 10);
-        const base = 10 + order.meat * 2;
-        const points = base + timeBonus;
-        state.score += points;
-        state.streak += 1;
-        log(`Served perfectly! +${points} pts (bonus ${timeBonus})`, 'good');
-      } else {
-        state.misses += 1;
-        state.streak = 0;
-        log('Order was wrong. Match exactly and wrap before serving.', 'bad');
-      }
-      updateStats();
-      clearPlate();
-    }
-
-    // Controls
-    ui.sliceBtn.addEventListener('click', () => {
-      state.plate.meat = Math.min(10, state.plate.meat + 1);
-      updatePlate();
-    });
-
-    ui.vegBtn.addEventListener('click', () => {
-      state.plate.veg = !state.plate.veg;
-      updatePlate();
-    });
-
-    ui.sauceBtn.addEventListener('click', () => {
-      state.plate.sauce = !state.plate.sauce;
-      updatePlate();
-    });
-
-    ui.wrapBtn.addEventListener('click', () => {
-      state.plate.wrapped = true;
-      updatePlate();
-    });
-
-    ui.unwrapBtn.addEventListener('click', () => {
-      state.plate.wrapped = false;
-      updatePlate();
-    });
-
-    ui.clearBtn.addEventListener('click', () => {
-      clearPlate();
-      log('Plate cleared.');
-    });
-
-    ui.serveBtn.addEventListener('click', serveFirst);
-
-    ui.newDayBtn.addEventListener('click', () => {
-      state.day += 1;
-      updateStats();
-      log(`Starting day ${state.day}: more demanding customers.`);
-      // spawn an initial burst of orders
-      for (let i = 0; i < Math.min(3, 1 + state.day); i++) {
-        setTimeout(createOrder, i * 500);
-      }
-    });
-
-    // Auto-spawn orders
-    function autoLoop() {
-      createOrder();
-      const nextMs = Math.max(2500, 5000 - state.day * 300);
-      setTimeout(autoLoop, nextMs);
-    }
-
-    // Init
-    updateStats();
-    updatePlate();
-    createOrder();
-    setTimeout(autoLoop, 4000);
-  </script>
+// Start game
+updateStats(); updatePlate(); createOrder();
+</script>
 </body>
 </html>
